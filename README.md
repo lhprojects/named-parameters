@@ -31,9 +31,9 @@ double test2(double a, double b, double c, double d) {
     using namespace par;
     return cal_mass2(p1 = b, energy=a);
 }
+```
 
-
-
+```c++
 #if __cplusplus >= 202002
 #include <iostream>
 #include <string_view>
