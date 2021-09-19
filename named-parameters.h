@@ -66,6 +66,11 @@ namespace np {
     
     NP_INL_CONSTEXPR nodef_t nodef;
 
+    template<class T>
+    struct remove_cvref {
+        typedef typename std::remove_const<typename std::remove_reference<T>::type>::type type;
+    };
+
     template<class A>
     struct get_arg_idx;
 
@@ -73,17 +78,21 @@ namespace np {
     struct get_arg_idx<Arg<I,A> > {
         static const int value = I;
     };
+
     template<class A>
-    struct get_arg_type;
+    struct argument_type_trait_impl;
 
     template<int I, class A>
-    struct get_arg_type<Arg<I, A> > {
+    struct argument_type_trait_impl<Arg<I, A> > {
         using type = A;
+        using forward_type = type&&;
     };
 
-    template<class T>
-    struct remove_cvref {
-        typedef typename std::remove_const<typename std::remove_reference<T>::type>::type type;
+    template<class A>
+    struct argument_type_trait {
+        using pure_argument_type = typename remove_cvref<A>::type;
+        using type = typename argument_type_trait_impl<pure_argument_type>::type;
+        using forward_type = typename argument_type_trait_impl<pure_argument_type>::forward_type;
     };
 
 
@@ -96,19 +105,29 @@ namespace np {
         return get_default(par, def, args...);
     }
 
+
     // find the argument
     template<int I, class E, class Default, class Arg0, class... Args>
-    auto&& get_default2(std::true_type, Parameter<I, E> const& par,
+    auto get_default2(std::true_type, Parameter<I, E> const& par,
         Default&& def, Arg0 &&arg0, Args&& ...args)
+        -> typename argument_type_trait<Arg0>::forward_type
     {
         typedef typename remove_cvref<Arg0>::type PureArg0;
-        typedef typename get_arg_type<PureArg0>::type arg0_type;
-        return static_cast<arg0_type&&>(static_cast<Arg0&&>(arg0).value);
+        typedef typename argument_type_trait<PureArg0>::type arg0_type;
+        return static_cast<arg0_type&&>(arg0.value);
     }
 
     template<int I, class E, class Default, class Arg0, class... Args>
-    auto&& get_default(Parameter<I, E> const& par,
+    auto get_default(Parameter<I, E> const& par,
         Default&& def, Arg0 &&arg0, Args&& ...args)
+        -> decltype((
+            get_default2(
+            std::integral_constant<bool,get_arg_idx<typename remove_cvref<Arg0>::type>::value == I>(),
+            par,
+            static_cast<Default&&>(def), 
+            static_cast<Arg0>(arg0), 
+            static_cast<Args>(args)...)
+        ))
     {
         typedef typename remove_cvref<Arg0>::type PureArg0;
         constexpr int arg0_idx = get_arg_idx<PureArg0>::value;
@@ -133,26 +152,19 @@ namespace np {
     }
 
     template<int I, class E, class... Args>
-    auto&& get(Parameter<I, E> const& par,
+    auto get(Parameter<I, E> const& par,
         Args&& ...args)
+        -> decltype((get_default(par, nodef, args...)))
     {
         return get_default(par, nodef, args...);
     }
-
-
-    
 
     template<int I, class E, class Arg0, class... Args>
     constexpr bool contains(Parameter<I, E> const& par,
         Arg0 &&arg0, Args&& ...args)
     {
         typedef typename remove_cvref<Arg0>::type PureArg0;
-        constexpr int arg0_idx = get_arg_idx<PureArg0>::value;
-        if constexpr (arg0_idx == I) {
-            return true;
-        } else {
-            return get_default(par, args...);
-        }
+        return I == get_arg_idx<PureArg0>::value ? true : contains(par, args...);
     }
 
     // reach the end of arguments
