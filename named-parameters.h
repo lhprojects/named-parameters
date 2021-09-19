@@ -14,7 +14,7 @@ namespace np {
     struct Arg {
 
         Arg(T const& value) : value(value) {}
-        T const& value;
+        T && value;
 
     };
 
