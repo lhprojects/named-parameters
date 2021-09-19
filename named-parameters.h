@@ -121,7 +121,7 @@ namespace np {
     }
 
     // reach the end of arguments
-    template<int I, class E, class Default, class... Args>
+    template<int I, class E, class Default>
     auto get_default(Parameter<I, E> const& par,
         Default&& def)
         -> decltype((static_cast<Default&&>(def)))
@@ -130,6 +130,36 @@ namespace np {
         static_assert(!std::is_same<PureDefault, nodef_t>::value,
             "no default value set for par");
         return static_cast<Default&&>(def);
+    }
+
+    template<int I, class E, class... Args>
+    auto&& get(Parameter<I, E> const& par,
+        Args&& ...args)
+    {
+        return get_default(par, nodef, args...);
+    }
+
+
+    
+
+    template<int I, class E, class Arg0, class... Args>
+    constexpr bool contains(Parameter<I, E> const& par,
+        Arg0 &&arg0, Args&& ...args)
+    {
+        typedef typename remove_cvref<Arg0>::type PureArg0;
+        constexpr int arg0_idx = get_arg_idx<PureArg0>::value;
+        if constexpr (arg0_idx == I) {
+            return true;
+        } else {
+            return get_default(par, args...);
+        }
+    }
+
+    // reach the end of arguments
+    template<int I, class E>
+    constexpr bool contains(Parameter<I, E> const& par)
+    {
+        return false;
     }
 
 #if __cplusplus >= 202002
