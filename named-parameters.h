@@ -3,7 +3,7 @@
 
 #include <type_traits>
 namespace np {
-  
+
 #if __cplusplus >= 201703
 #define NP_INL_CONSTEXPR inline constexpr
 #else
@@ -13,27 +13,32 @@ namespace np {
     template<int name, class T>
     struct Arg {
 
-        Arg(T const& value) : value(value) {}
-        T && value;
+        Arg(T && value) : value(static_cast<T&&>(value)) {}
+        T&& value;
 
     };
+
 
     template<int name, class T>
     struct Parameter {
 
         Parameter() = default;
-
-        Arg<name, T const &> operator=(T const& a) const
-        {
-            return Arg<name, T const &>(a);
-        }
+        
         Arg<name, T&> operator=(T& a) const
         {
-            return Arg<name, T&>(a);
+            return Arg<name, T&>(static_cast<T&>(a));
+        }
+        Arg<name, T const&> operator=(T const& a) const
+        {
+            return Arg<name, T const&>(static_cast<T const&>(a));
         }
         Arg<name, T&&> operator=(T&& a) const
         {
-            return Arg<name, T&&>(a);
+            return Arg<name, T&&>(static_cast<T&&>(a));
+        }
+        Arg<name, const T&&> operator=(const T&& a) const
+        {
+            return Arg<name, const T&&>(static_cast<const T&&>(a));
         }
     };
 
@@ -63,7 +68,7 @@ namespace np {
 
     struct nodef_t {
     };
-    
+
     NP_INL_CONSTEXPR nodef_t nodef;
 
     template<class T>
@@ -75,7 +80,7 @@ namespace np {
     struct get_arg_idx;
 
     template<int I, class A>
-    struct get_arg_idx<Arg<I,A> > {
+    struct get_arg_idx<Arg<I, A> > {
         static const int value = I;
     };
 
@@ -99,7 +104,7 @@ namespace np {
     // not find the argument, continue to search
     template<int I, class E, class Default, class Arg0, class... Args>
     auto get_default2(std::false_type, Parameter<I, E> const& par,
-        Default&& def, Arg0 &&arg0, Args&& ...args)
+        Default&& def, Arg0&& arg0, Args&& ...args)
         -> decltype((get_default(par, def, args...)))
     {
         return get_default(par, def, args...);
@@ -109,7 +114,7 @@ namespace np {
     // find the argument
     template<int I, class E, class Default, class Arg0, class... Args>
     auto get_default2(std::true_type, Parameter<I, E> const& par,
-        Default&& def, Arg0 &&arg0, Args&& ...args)
+        Default&& def, Arg0&& arg0, Args&& ...args)
         -> typename argument_type_trait<Arg0>::forward_type
     {
         typedef typename remove_cvref<Arg0>::type PureArg0;
@@ -119,23 +124,23 @@ namespace np {
 
     template<int I, class E, class Default, class Arg0, class... Args>
     auto get_default(Parameter<I, E> const& par,
-        Default&& def, Arg0 &&arg0, Args&& ...args)
+        Default&& def, Arg0&& arg0, Args&& ...args)
         -> decltype((
             get_default2(
-            std::integral_constant<bool,get_arg_idx<typename remove_cvref<Arg0>::type>::value == I>(),
-            par,
-            static_cast<Default&&>(def), 
-            static_cast<Arg0>(arg0), 
-            static_cast<Args>(args)...)
-        ))
+                std::integral_constant<bool, get_arg_idx<typename remove_cvref<Arg0>::type>::value == I>(),
+                par,
+                static_cast<Default&&>(def),
+                static_cast<Arg0>(arg0),
+                static_cast<Args>(args)...)
+            ))
     {
         typedef typename remove_cvref<Arg0>::type PureArg0;
         constexpr int arg0_idx = get_arg_idx<PureArg0>::value;
         return get_default2(
-            std::integral_constant<bool,arg0_idx == I>(),
+            std::integral_constant<bool, arg0_idx == I>(),
             par,
-            static_cast<Default&&>(def), 
-            static_cast<Arg0>(arg0), 
+            static_cast<Default&&>(def),
+            static_cast<Arg0>(arg0),
             static_cast<Args>(args)...);
     }
 
@@ -161,7 +166,7 @@ namespace np {
 
     template<int I, class E, class Arg0, class... Args>
     constexpr bool contains(Parameter<I, E> const& par,
-        Arg0 &&arg0, Args&& ...args)
+        Arg0&& arg0, Args&& ...args)
     {
         typedef typename remove_cvref<Arg0>::type PureArg0;
         return I == get_arg_idx<PureArg0>::value ? true : contains(par, args...);
