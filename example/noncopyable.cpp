@@ -26,3 +26,8 @@ void test_bar()
     use_copyable(a1 = const_bar);
     use_copyable(a1 = static_cast<const NonCopyable&&>(const_bar));
 }
+
+int main() {
+    test_bar();
+    return 0;
+}
