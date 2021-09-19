@@ -135,9 +135,12 @@ namespace np {
 #if __cplusplus >= 202002
     template<typename T>
     concept argument = is_argument<T>::value;
+#define NA_ARGUMENT ::np::argument
+#else
+#define NA_ARGUMENT class
 #endif
+
 
 }
 
 #endif // NAMED_PARAMETERS_H
-
