@@ -26,6 +26,8 @@ NA_INL_CONSTEXPR np::Parameter< <unique_number> , <type without neither const, &
 
 template<NP_ARGUMENT... Args>
 //CPP macro NP_ARGUMENT is atuo set to either to class or ::np::argument, accorinding to __cplusplus
+// for c++20 use template<np::argument... Args> is better
+// for c++11 use template<class.. Args, class T = typename std::enable_if<np::all_arguments<Args...>::value, int>::type>
 void function(Args... args) {
     // get value for <parameter_id>
     // compile error if argument for <parameter_id> not in args
