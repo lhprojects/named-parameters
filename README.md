@@ -40,6 +40,7 @@ template<class... Args>
 void function(Args... args) {
     // get value for <parameter_id>
     // compile error if argument for <parameter_id> not in args
+    // the same as np::get_default(<parameter_id>, np::nodef, args...)
     np::get(<parameter_id>, <default_value>, args...)
     
     // get value for <parameter_id>
