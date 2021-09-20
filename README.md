@@ -49,7 +49,7 @@ void function(Args... args) {
     np::get_default(<parameter_id>, <default_value>, args...)
     
     // check if args contain the argument for <parameter_id>
-    cosntexpr bool np::contains(<parameter_id>, <default_value>, args...)
+    cosntexpr bool np::contains(<parameter_id>, args...)
     
 }
 ```
