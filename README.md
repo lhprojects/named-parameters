@@ -34,6 +34,24 @@ double test_mass2(double a, double b, double c) {
 
 ```
 
+## Reference
+```c++
+template<class... Args>
+void function(Args... args) {
+    // get value for <parameter_id>
+    // compile error if argument for <parameter_id> not in args
+    np::get(<parameter_id>, <default_value>, args...)
+    
+    // get value for <parameter_id>
+    // return the <default_value> if argument for <parameter_id> not in args
+    np::get_default(<parameter_id>, <default_value>, args...)
+    
+    // check if args contain the argument for <parameter_id>
+    cosntexpr bool np::contains(<parameter_id>, <default_value>, args...)
+    
+}
+```
+
 ```c++
 
 #if __cplusplus >= 202002
