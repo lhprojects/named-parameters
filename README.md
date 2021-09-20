@@ -1,6 +1,52 @@
 # named-parameters
 
-## Example:
+## Short Example:
+```c++
+#include <named-parameters.h>
+
+NA_INL_CONSTEXPR np::Parameter<0,int> a1;
+NA_INL_CONSTEXPR np::Parameter<0,int> a2;
+
+template<NP_ARGUMENT... Args>
+void func(Args... args) {
+    // see test_func
+    // decltype((np::get_default(a1, 0, args...) )) -> (const int &)1
+    // decltype((np::get_default(a2, 1, args...) )) -> (int&&)2
+    return np::get_default(a1, 0, args...) / np::get_default(a2, 1, args...);
+}
+
+void test_func() {
+    int const one = 1;
+    return func(a2=2, a1 = one); // result = 1/2 = 0
+}
+```
+
+## Reference
+```c++
+#include <named-parameters.h>
+
+NA_INL_CONSTEXPR np::Parameter< <unique_number> , <type without const and && or &> > <parameter_id>;
+//NA_INL_CONSTEXPR is auto set to either to static constexpr or inline constexpr, according to __cplusplus
+
+template<NP_ARGUMENT... Args>
+// NP_ARGUMENT is atuo set to either to class or ::np::argument, accorinding to __cplusplus
+void function(Args... args) {
+    // get value for <parameter_id>
+    // compile error if argument for <parameter_id> not in args
+    // the same as np::get_default(<parameter_id>, np::nodef, args...)
+    np::get(<parameter_id>, <default_value>, args...)
+    
+    // get value for <parameter_id>
+    // return the <default_value> if argument for <parameter_id> not in args
+    np::get_default(<parameter_id>, <default_value>, args...)
+    
+    // check if args contain the argument for <parameter_id>
+    cosntexpr bool np::contains(<parameter_id>, args...)
+    
+}
+```
+
+## Median Long Example:
 https://godbolt.org/z/o3Gnz3GTf
 ```c++
 #include <named-parameters.h>
@@ -34,30 +80,6 @@ double test_mass2(double a, double b, double c) {
     return mass2(p = b, energy=a, p2 = c/*this is not used*/);
 }
 
-```
-
-## Reference
-```c++
-
-NA_INL_CONSTEXPR np::Parameter< <unique_number> , <type without const and && or &> > <parameter_id>;
-//NA_INL_CONSTEXPR is auto set to either to static constexpr or inline constexpr, according to __cplusplus
-
-template<NP_ARGUMENT... Args>
-// NP_ARGUMENT is atuo set to either to class or ::np::argument, accorinding to __cplusplus
-void function(Args... args) {
-    // get value for <parameter_id>
-    // compile error if argument for <parameter_id> not in args
-    // the same as np::get_default(<parameter_id>, np::nodef, args...)
-    np::get(<parameter_id>, <default_value>, args...)
-    
-    // get value for <parameter_id>
-    // return the <default_value> if argument for <parameter_id> not in args
-    np::get_default(<parameter_id>, <default_value>, args...)
-    
-    // check if args contain the argument for <parameter_id>
-    cosntexpr bool np::contains(<parameter_id>, args...)
-    
-}
 ```
 
 ## A long example:
