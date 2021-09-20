@@ -1,6 +1,6 @@
 # named-parameters
 
-## Short Example:
+## Example 1:
 ```c++
 #include <named-parameters.h>
 
@@ -21,7 +21,7 @@ int test_func() {
 ```c++
 #include <named-parameters.h>
 
-NA_INL_CONSTEXPR np::Parameter< <unique_number> , <type without neither const, && nor &> > <parameter_id>;
+NA_INL_CONSTEXPR np::Parameter< <unique_number> , <type> >  <parameter_name>;
 //CPP macro NA_INL_CONSTEXPR is auto set to either to static constexpr or inline constexpr, according to __cplusplus
 
 template<NP_ARGUMENT... Args>
@@ -30,20 +30,48 @@ template<NP_ARGUMENT... Args>
 // for c++11, using `template<class.. Args, class T = 
 //     typename std::enable_if<np::all_arguments<Args...>::value, int>::type>` is beter
 void function(Args... args) {
-    // get value for <parameter_id>
+    // get value for <parameter_name>
     // compile error if argument for <parameter_id> not in args
-    // the same as np::get_default(<parameter_id>, np::nodef, args...)
-    np::get(<parameter_id>, <default_value>, args...)
+    // the same as np::get_default(<parameter_name>, np::nodef, args...)
+    np::get(<parameter_name>, <default_value>, args...)
     
-    // get value for <parameter_id>
+    // get value for <parameter_name>
     // return the <default_value> if argument for <parameter_id> not in args
-    np::get_default(<parameter_id>, <default_value>, args...)
+    np::get_default(<parameter_name>, <default_value>, args...)
     
-    // check if args contain the argument for <parameter_id>
-    cosntexpr bool np::contains(<parameter_id>, args...)
+    // check if args contain the argument for <parameter_name>
+    cosntexpr bool np::contains(<parameter_name>, args...)
     
 }
 ```
+
+### Forwarding rules
+```c++
+inline constexpr np::Parameter<0, <type> > arg;
+
+template<class Arg>
+void func(Arg arg) {
+    np::get(a2, arg);
+}
+
+void test_func() {
+    return func(arg = <value>);
+}
+```
+
+Above is the same as:
+
+```c++
+
+int func(<type> arg) {    
+    static_cast< <type>&& >(arg);
+}
+
+int test_func() {
+    return func(<value>);
+}
+```
+
 
 ## Median Long Example:
 https://godbolt.org/z/o3Gnz3GTf
