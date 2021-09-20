@@ -22,10 +22,10 @@ int test_func() {
 #include <named-parameters.h>
 
 NA_INL_CONSTEXPR np::Parameter< <unique_number> , <type without neither const, && nor &> > <parameter_id>;
-//NA_INL_CONSTEXPR is auto set to either to static constexpr or inline constexpr, according to __cplusplus
+//CPP macro NA_INL_CONSTEXPR is auto set to either to static constexpr or inline constexpr, according to __cplusplus
 
 template<NP_ARGUMENT... Args>
-// NP_ARGUMENT is atuo set to either to class or ::np::argument, accorinding to __cplusplus
+//CPP macro NP_ARGUMENT is atuo set to either to class or ::np::argument, accorinding to __cplusplus
 void function(Args... args) {
     // get value for <parameter_id>
     // compile error if argument for <parameter_id> not in args
