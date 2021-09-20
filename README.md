@@ -61,24 +61,24 @@ void bar(Bar &&a)
 {
 }
 
-NA_INL_CONSTEXPR na::Parameter<0, int> user_id;
-NA_INL_CONSTEXPR na::Parameter<1, std::string_view> user_name;
-NA_INL_CONSTEXPR na::Parameter<2, int> foo_a;
-NA_INL_CONSTEXPR na::Parameter<4, Bar> bar_a;
+NP_INL_CONSTEXPR np::Parameter<0, int> user_id;
+NP_INL_CONSTEXPR np::Parameter<1, std::string_view> user_name;
+NP_INL_CONSTEXPR np::Parameter<2, int> foo_a;
+NP_INL_CONSTEXPR np::Parameter<4, Bar> bar_a;
 
-template<na::argument... Args >
+template<np::argument... Args >
 inline void foo(char const* comment, Args&& ...args)
 {
     foo(comment,
-        na::get_default(user_id, na::nodef, std::forward<Args>(args)...),
-        na::get_default(user_name, std::nullopt, std::forward<Args>(args)...),
-        na::get_default(foo_a, 0, std::forward<Args>(args)...));
+        np::get_default(user_id, np::nodef, args...),
+        np::get_default(user_name, std::nullopt, args...),
+        np::get_default(foo_a, 0, args...));
 }
 
-template<na::argument... Args >
+template<np::argument... Args >
 void bar(Args&& ...args)
 {
-    bar(na::get_default(bar_a, na::nodef, std::forward<Args>(args)...));
+    bar(np::get_default(bar_a, np::nodef, args...));
 }
 
 
