@@ -20,7 +20,7 @@ double mass2(Args ...args) { // return energy^2 - p1^2 - p2^2 - p3^2 = energy^2 
     double e2 = sqr(np::get_default(energy, 0, args...));
     // c++11                                            c++ 17
     if (np::contains(p, args...)) {                  // if constexpr (np::contains(p, args...)) {
-        e2 -= sqr(np::get(p, 0, args...));           //     e2 -= sqr(np::get(p, args...));
+        e2 -= sqr(np::get_default(p, 0, args...));           //     e2 -= sqr(np::get(p, args...));
     } else {
         e2 -= sqr(np::get_default(p1, 0, args...));
         e2 -= sqr(np::get_default(p2, 0, args...));
