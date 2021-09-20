@@ -4,8 +4,8 @@
 ```c++
 #include <named-parameters.h>
 
-inline constexpr np::Parameter<0,int> a1;
-inline constexpr np::Parameter<1,int> a2;
+inline constexpr np::Parameter<1,int> a1;
+inline constexpr np::Parameter<12,int> a2;
 
 template<na::argument... Args>
 double func(Args... args) {
