@@ -35,16 +35,12 @@ double test_mass2(double a, double b, double c) {
 ```
 
 ```c++
+
 #if __cplusplus >= 202002
 #include <iostream>
 #include <string_view>
 #include <optional>
 
-struct Bar{
-    Bar() { printf("ctor()\n"); }
-    Bar(Bar const& r) { printf("copy\n"); }
-    Bar(Bar&& r) noexcept { printf("move\n"); }
-};
 
 void foo(char const* comment,
     int a,
@@ -57,14 +53,10 @@ void foo(char const* comment,
         << c << "\n";
 }
 
-void bar(Bar &&a)
-{
-}
 
 NP_INL_CONSTEXPR np::Parameter<0, int> user_id;
 NP_INL_CONSTEXPR np::Parameter<1, std::string_view> user_name;
 NP_INL_CONSTEXPR np::Parameter<2, int> foo_a;
-NP_INL_CONSTEXPR np::Parameter<4, Bar> bar_a;
 
 template<np::argument... Args >
 inline void foo(char const* comment, Args&& ...args)
@@ -75,22 +67,15 @@ inline void foo(char const* comment, Args&& ...args)
         np::get_default(foo_a, 0, args...));
 }
 
-template<np::argument... Args >
-void bar(Args&& ...args)
-{
-    bar(np::get_default(bar_a, np::nodef, args...));
-}
 
-
-void test1()
+void test_foo()
 {
     foo("1: ", user_id = 1, user_name = "a");
     foo("2: ", user_name = "a", user_id = 1);
     foo("3: ", user_id = 1, foo_a = 2);
     foo("4: ", user_id = 3, user_name = std::string("a"));
     //foo("5: ");
-    bar(bar_a = Bar());
-}
+ 
 
 #endif
 
