@@ -7,7 +7,7 @@
 NA_INL_CONSTEXPR np::Parameter<0,int> a1;
 NA_INL_CONSTEXPR np::Parameter<0,int> a2;
 
-template<NP_ARGUMENT... Args>
+template<na::argument... Args>
 double func(Args... args) {
     return np::get_default(a1, 0, args...) / np::get_default(a2, 1, args...);
 }
