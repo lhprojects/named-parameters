@@ -56,7 +56,7 @@ namespace par{
     NP_INL_CONSTEXPR np::Parameter<114, double> p;
 }
 
-template<NP_ARGUMENT... Args>
+template<class... Args, class T =  typename std::enable_if<np::all_arguments<Args...>::value, int>::type>
 double mass2(Args ...args) { // return energy^2 - p1^2 - p2^2 - p3^2 = energy^2 - p^2
     using namespace par;
     auto sqr = [](double x) { return x*x; };
