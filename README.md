@@ -7,7 +7,7 @@
 inline constexpr np::Parameter<1,int> a1;
 inline constexpr np::Parameter<12,int> a2;
 
-template<na::argument... Args>
+template<np::argument... Args>
 int func(Args... args) {
     return np::get_default(a1, 0, args...) / np::get_default(a2, 1, args...);
 }
