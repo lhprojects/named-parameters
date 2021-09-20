@@ -21,7 +21,7 @@ int test_func() {
 ```c++
 #include <named-parameters.h>
 
-NA_INL_CONSTEXPR np::Parameter< <unique_number> , <type without const and && or &> > <parameter_id>;
+NA_INL_CONSTEXPR np::Parameter< <unique_number> , <type without neither const, && nor &> > <parameter_id>;
 //NA_INL_CONSTEXPR is auto set to either to static constexpr or inline constexpr, according to __cplusplus
 
 template<NP_ARGUMENT... Args>
