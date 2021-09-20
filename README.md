@@ -37,7 +37,12 @@ double test_mass2(double a, double b, double c) {
 
 ## Reference
 ```c++
-template<class... Args>
+
+NA_INL_CONSTEXPR np::Parameter< <unique_number> , <type without const and && or &> > <parameter_id>;
+//NA_INL_CONSTEXPR is auto set to either to static constexpr or inline constexpr, according to __cplusplus
+
+template<NP_ARGUMENT... Args>
+// NP_ARGUMENT is atuo set to either to class or ::np::argument, accorinding to __cplusplus
 void function(Args... args) {
     // get value for <parameter_id>
     // compile error if argument for <parameter_id> not in args
