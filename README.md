@@ -9,15 +9,11 @@ NA_INL_CONSTEXPR np::Parameter<0,int> a2;
 
 template<NP_ARGUMENT... Args>
 void func(Args... args) {
-    // see test_func
-    // decltype((np::get_default(a1, 0, args...) )) -> (const int &)1
-    // decltype((np::get_default(a2, 1, args...) )) -> (int&&)2
     return np::get_default(a1, 0, args...) / np::get_default(a2, 1, args...);
 }
 
 void test_func() {
-    int const one = 1;
-    return func(a2=2, a1 = one); // result = 1/2 = 0
+    return func(a2=2); // 0/2 = 0
 }
 ```
 
