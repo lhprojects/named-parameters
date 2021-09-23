@@ -47,15 +47,16 @@ void function(Args... args) {
 
 ### Forwarding rules
 ```c++
-inline constexpr np::Parameter<0, <type> > arg;
+inline constexpr np::Parameter<0, <type> > par;
 
 template<class Arg>
 void func(Arg arg) {
-    np::get(a2, arg);
+    np::get(par, arg);
+    np::get_default(par, <default_value>, arg)
 }
 
 void test_func() {
-    return func(arg = <value>);
+    return func(par = <value>);
 }
 ```
 
@@ -65,6 +66,7 @@ Above is the same as:
 
 int func(<type> arg) {    
     static_cast< <type>&& >(arg);
+    <contain_par?> ? static_cast< <type>&& >(arg) : static_cast< <type>&& >(<default_value>);
 }
 
 int test_func() {
